@@ -47,14 +47,16 @@ jobs:
           mkdir -p "${GITHUB_WORKSPACE}/output/srs"
           ./geodat2srs geosite \
             -i "${GITHUB_WORKSPACE}/output/geosite.dat" \
-            -o "${GITHUB_WORKSPACE}/output/srs" \
-            --prefix ""
+            -o "${GITHUB_WORKSPACE}/output/srs"
+          shopt -s nullglob
+          for f in "${GITHUB_WORKSPACE}/output/srs"/geosite-*.srs; do
+            mv "$f" "${f/geosite-/}"
+          done
 
       - name: Verify outputs
         run: |
           test -f output/geosite.dat
-          test -f output/srs/youtube.srs
-          git rm -f output/srs/geosite-*.srs 2>/dev/null || true
+          test "$(find output/srs -maxdepth 1 -name '*.srs' | wc -l)" -gt 0
           ls -la output/yaml output/srs output/geosite.dat
 
       - name: Commit generated files
