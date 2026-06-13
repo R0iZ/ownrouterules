@@ -1,0 +1,47 @@
+name: Build rules
+
+on:
+  push:
+    paths:
+      - "source/**"
+      - "build.py"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sing-box
+        run: |
+          curl -L -o sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz
+          tar -xzf sing-box.tar.gz
+          sudo install sing-box-*/sing-box /usr/local/bin/sing-box
+          sing-box version
+
+      - name: Generate yaml and srs sources
+        run: python3 build.py
+
+      - name: Build geosite.dat
+        run: |
+          git clone --depth=1 https://github.com/v2fly/domain-list-community.git /tmp/dlc
+          cd /tmp/dlc
+          go mod download
+          go run ./ --datapath="${GITHUB_WORKSPACE}/output/geosite-data"
+          cp dlc.dat "${GITHUB_WORKSPACE}/output/geosite.dat"
+
+      - name: Commit generated files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Build rule files"
+          file_pattern: |
+            output/yaml/**
+            output/srs/**
+            output/geosite.dat
