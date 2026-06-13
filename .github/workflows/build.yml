@@ -43,16 +43,18 @@ jobs:
           git clone --depth=1 https://github.com/runetfreedom/geodat2srs.git /tmp/geodat2srs
           cd /tmp/geodat2srs
           go build -o geodat2srs .
+          rm -rf "${GITHUB_WORKSPACE}/output/srs"
           mkdir -p "${GITHUB_WORKSPACE}/output/srs"
           ./geodat2srs geosite \
             -i "${GITHUB_WORKSPACE}/output/geosite.dat" \
             -o "${GITHUB_WORKSPACE}/output/srs" \
-            --prefix "geosite-"
+            --prefix ""
 
       - name: Verify outputs
         run: |
           test -f output/geosite.dat
-          test "$(find output/srs -name '*.srs' | wc -l)" -gt 0
+          test -f output/srs/youtube.srs
+          git rm -f output/srs/geosite-*.srs 2>/dev/null || true
           ls -la output/yaml output/srs output/geosite.dat
 
       - name: Commit generated files
@@ -60,3 +62,4 @@ jobs:
         with:
           commit_message: "Build rule files"
           file_pattern: output/**
+          add_options: "-A"
