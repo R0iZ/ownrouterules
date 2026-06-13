@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sing-box
         run: |
@@ -38,7 +38,7 @@ jobs:
           cp dlc.dat "${GITHUB_WORKSPACE}/output/geosite.dat"
 
       - name: Commit generated files
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Build rule files"
           file_pattern: |
