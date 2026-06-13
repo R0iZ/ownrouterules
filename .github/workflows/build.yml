@@ -26,10 +26,11 @@ jobs:
         with:
           go-version: "1.24"
 
-      - name: Generate yaml and geosite sources
+      - name: Generate sources
         run: python3 build.py
 
       - name: Build geosite.dat
+        if: hashFiles('source/*.txt') != ''
         run: |
           git clone --depth=1 https://github.com/v2fly/domain-list-community.git /tmp/dlc
           cd /tmp/dlc
@@ -38,26 +39,51 @@ jobs:
           test -f dlc.dat
           cp dlc.dat "${GITHUB_WORKSPACE}/output/geosite.dat"
 
-      - name: Build SRS from geosite.dat
+      - name: Build geoip.dat
+        if: hashFiles('source/ip/*.txt') != ''
+        run: |
+          git clone --depth=1 https://github.com/v2fly/geoip.git /tmp/geoip
+          cd /tmp/geoip
+          go mod download
+          go run ./ -c "${GITHUB_WORKSPACE}/output/geoip-config.json"
+          test -f "${GITHUB_WORKSPACE}/output/geoip.dat"
+
+      - name: Build SRS files
         run: |
           git clone --depth=1 https://github.com/runetfreedom/geodat2srs.git /tmp/geodat2srs
           cd /tmp/geodat2srs
           go build -o geodat2srs .
           rm -rf "${GITHUB_WORKSPACE}/output/srs"
           mkdir -p "${GITHUB_WORKSPACE}/output/srs"
-          ./geodat2srs geosite \
-            -i "${GITHUB_WORKSPACE}/output/geosite.dat" \
-            -o "${GITHUB_WORKSPACE}/output/srs"
+
+          if [ -f "${GITHUB_WORKSPACE}/output/geosite.dat" ]; then
+            ./geodat2srs geosite \
+              -i "${GITHUB_WORKSPACE}/output/geosite.dat" \
+              -o "${GITHUB_WORKSPACE}/output/srs"
+          fi
+
+          if [ -f "${GITHUB_WORKSPACE}/output/geoip.dat" ]; then
+            ./geodat2srs geoip \
+              -i "${GITHUB_WORKSPACE}/output/geoip.dat" \
+              -o "${GITHUB_WORKSPACE}/output/srs"
+          fi
+
           shopt -s nullglob
           for f in "${GITHUB_WORKSPACE}/output/srs"/geosite-*.srs; do
             mv "$f" "${f/geosite-/}"
           done
+          for f in "${GITHUB_WORKSPACE}/output/srs"/geoip-*.srs; do
+            mv "$f" "${f/geoip-/}"
+          done
 
       - name: Verify outputs
         run: |
-          test -f output/geosite.dat
-          test "$(find output/srs -maxdepth 1 -name '*.srs' | wc -l)" -gt 0
-          ls -la output/yaml output/srs output/geosite.dat
+          ls -la output/yaml output/ip output/srs 2>/dev/null || true
+          ls -la output/geosite.dat output/geoip.dat 2>/dev/null || true
+          srs_count=$(find output/srs -maxdepth 1 -name '*.srs' 2>/dev/null | wc -l)
+          if [ -f output/geosite.dat ] || [ -f output/geoip.dat ]; then
+            test "$srs_count" -gt 0
+          fi
 
       - name: Commit generated files
         uses: stefanzweifel/git-auto-commit-action@v7
