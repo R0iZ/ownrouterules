@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import os
 import subprocess
 import shutil
 
@@ -44,21 +45,27 @@ for src in SOURCE.glob("*.txt"):
 
     srs_json = {
         "version": 3,
-        "rules": [{"domain_suffix": domains}],
+        "rules": [
+            {
+                "domain": domains,
+                "domain_suffix": [f".{d}" for d in domains],
+            }
+        ],
     }
     json_path = SRS_JSON_OUT / f"{name}.json"
     json_path.write_text(json.dumps(srs_json, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    geosite_text = "\n".join(f"domain:{d}" for d in domains) + "\n"
+    geosite_text = "\n".join(domains) + "\n"
     (GEOSITE_DATA / name).write_text(geosite_text, encoding="utf-8")
 
     print(f"prepared {name} ({len(domains)} domains)")
 
-if shutil.which("sing-box"):
+sing_box = os.environ.get("SING_BOX") or shutil.which("sing-box")
+if sing_box:
     for json_file in SRS_JSON_OUT.glob("*.json"):
         out_file = SRS_OUT / f"{json_file.stem}.srs"
         subprocess.run(
-            ["sing-box", "rule-set", "compile", "--output", str(out_file), str(json_file)],
+            [sing_box, "rule-set", "compile", "--output", str(out_file), str(json_file)],
             check=True,
         )
         print(f"compiled {out_file.name}")
