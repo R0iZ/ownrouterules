@@ -28,7 +28,8 @@ jobs:
           tar -xzf sing-box.tar.gz
           SING_BOX_DIR="${GITHUB_WORKSPACE}/sing-box-${VERSION}-linux-amd64"
           echo "${SING_BOX_DIR}" >> "$GITHUB_PATH"
-          sing-box version
+          echo "SING_BOX=${SING_BOX_DIR}/sing-box" >> "$GITHUB_ENV"
+          "${SING_BOX_DIR}/sing-box" version
 
       - name: Setup Go
         uses: actions/setup-go@v5
