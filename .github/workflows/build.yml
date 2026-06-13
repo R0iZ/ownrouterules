@@ -21,9 +21,12 @@ jobs:
 
       - name: Install sing-box
         run: |
-          curl -L -o sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz
+          TAG=$(curl -fsSL https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r .tag_name)
+          VERSION="${TAG#v}"
+          curl -fsSL -o sing-box.tar.gz \
+            "https://github.com/SagerNet/sing-box/releases/download/${TAG}/sing-box-${VERSION}-linux-amd64.tar.gz"
           tar -xzf sing-box.tar.gz
-          sudo install sing-box-*/sing-box /usr/local/bin/sing-box
+          sudo install "sing-box-${VERSION}-linux-amd64/sing-box" /usr/local/bin/sing-box
           sing-box version
 
       - name: Generate yaml and srs sources
