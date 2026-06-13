@@ -1,17 +1,11 @@
 from pathlib import Path
-import json
-import os
-import subprocess
-import shutil
 
 SOURCE = Path("source")
 OUT = Path("output")
 YAML_OUT = OUT / "yaml"
-SRS_JSON_OUT = OUT / "srs-json"
-SRS_OUT = OUT / "srs"
 GEOSITE_DATA = OUT / "geosite-data"
 
-for p in [YAML_OUT, SRS_JSON_OUT, SRS_OUT, GEOSITE_DATA]:
+for p in [YAML_OUT, GEOSITE_DATA]:
     p.mkdir(parents=True, exist_ok=True)
 
 
@@ -43,31 +37,7 @@ for src in SOURCE.glob("*.txt"):
     yaml_text = "payload:\n" + "\n".join(f"  - '+.{d}'" for d in domains) + "\n"
     (YAML_OUT / f"{name}.yaml").write_text(yaml_text, encoding="utf-8")
 
-    srs_json = {
-        "version": 3,
-        "rules": [
-            {
-                "domain": domains,
-                "domain_suffix": [f".{d}" for d in domains],
-            }
-        ],
-    }
-    json_path = SRS_JSON_OUT / f"{name}.json"
-    json_path.write_text(json.dumps(srs_json, ensure_ascii=False, indent=2), encoding="utf-8")
-
     geosite_text = "\n".join(domains) + "\n"
     (GEOSITE_DATA / name).write_text(geosite_text, encoding="utf-8")
 
     print(f"prepared {name} ({len(domains)} domains)")
-
-sing_box = os.environ.get("SING_BOX") or shutil.which("sing-box")
-if sing_box:
-    for json_file in SRS_JSON_OUT.glob("*.json"):
-        out_file = SRS_OUT / f"{json_file.stem}.srs"
-        subprocess.run(
-            [sing_box, "rule-set", "compile", "--output", str(out_file), str(json_file)],
-            check=True,
-        )
-        print(f"compiled {out_file.name}")
-else:
-    print("sing-box not found, skip .srs build")
