@@ -6,6 +6,8 @@ on:
       - "source/**"
       - "build.py"
       - ".github/workflows/build.yml"
+  schedule:
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 permissions:
