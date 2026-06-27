@@ -4,6 +4,7 @@
 +.akamaitechnologies.com
 +.alicdn.com
 +.allawnos.com
++.allawnofs.com
 +.amazonaws.com
 +.arkoselabs.co
 +.arkoselabs.com
