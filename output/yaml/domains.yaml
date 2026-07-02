@@ -1,9 +1,9 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-07-01 07:05:07
-# DOMAIN-SUFFIX: 89
-# TOTAL: 89
+# UPDATED: 2026-07-02 02:00:30
+# DOMAIN-SUFFIX: 90
+# TOTAL: 90
 payload:
   - DOMAIN-SUFFIX,4pda.to
   - DOMAIN-SUFFIX,4pda.ws
@@ -64,6 +64,7 @@ payload:
   - DOMAIN-SUFFIX,ru.actor
   - DOMAIN-SUFFIX,sagernet.org
   - DOMAIN-SUFFIX,samsungdm.com
+  - DOMAIN-SUFFIX,securitylab.ru
   - DOMAIN-SUFFIX,sentry.io
   - DOMAIN-SUFFIX,server-panel.net
   - DOMAIN-SUFFIX,sh365.org
