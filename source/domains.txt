@@ -91,3 +91,4 @@
 +.domashka.club
 +.amnezia.org
 +.supercell.com
++.securitylab.ru
