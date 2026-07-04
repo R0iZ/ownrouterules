@@ -134,7 +134,7 @@ def load_v2dat_geosite_rules(directory: Path) -> list[tuple[str, str]]:
         return []
 
     rules: list[tuple[str, str]] = []
-    for path in directory.glob("*.txt"):
+    for path in directory.rglob("*.txt"):
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             if rule := parse_v2dat_geosite_line(line):
                 rules.append(rule)
@@ -146,7 +146,7 @@ def load_v2dat_geoip_rules(directory: Path) -> list[tuple[str, str]]:
         return []
 
     rules: list[tuple[str, str]] = []
-    for path in directory.glob("*.txt"):
+    for path in directory.rglob("*.txt"):
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             cidr = parse_ip(line)
             if cidr:

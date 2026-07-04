@@ -41,10 +41,14 @@ jobs:
           git clone --depth=1 https://github.com/urlesistiana/v2dat.git /tmp/v2dat
           cd /tmp/v2dat
           go build -o v2dat .
-          ./v2dat unpack geosite -d "${GITHUB_WORKSPACE}/output/import/geosite-unpacked" \
+          mkdir -p "${GITHUB_WORKSPACE}/output/import/geosite-unpacked" \
+            "${GITHUB_WORKSPACE}/output/import/geoip-unpacked"
+          ./v2dat unpack geosite -o "${GITHUB_WORKSPACE}/output/import/geosite-unpacked" \
             "${GITHUB_WORKSPACE}/output/import/russia-geosite.dat"
-          ./v2dat unpack geoip -d "${GITHUB_WORKSPACE}/output/import/geoip-unpacked" \
+          ./v2dat unpack geoip -o "${GITHUB_WORKSPACE}/output/import/geoip-unpacked" \
             "${GITHUB_WORKSPACE}/output/import/russia-geoip.dat"
+          test "$(find "${GITHUB_WORKSPACE}/output/import/geosite-unpacked" -name '*.txt' | wc -l)" -gt 0
+          test "$(find "${GITHUB_WORKSPACE}/output/import/geoip-unpacked" -name '*.txt' | wc -l)" -gt 0
 
       - name: Generate sources
         run: python3 build.py
@@ -100,7 +104,12 @@ jobs:
         run: |
           test -f output/yaml/blocked-domains.yaml
           test -f output/yaml/blocked-ip.yaml
-          ls -la output/yaml/blocked-domains.yaml output/yaml/blocked-ip.yaml
+          domain_total=$(grep -E '^# TOTAL:' output/yaml/blocked-domains.yaml | awk '{print $3}')
+          ip_total=$(grep -E '^# TOTAL:' output/yaml/blocked-ip.yaml | awk '{print $3}')
+          echo "blocked-domains total: ${domain_total}"
+          echo "blocked-ip total: ${ip_total}"
+          test "${domain_total}" -gt 1000
+          test "${ip_total}" -gt 0
 
       - name: Commit generated files
         uses: stefanzweifel/git-auto-commit-action@v7
