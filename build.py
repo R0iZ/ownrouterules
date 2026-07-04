@@ -11,20 +11,27 @@ IP_OUT = OUT / "ip"
 GEOSITE_DATA = OUT / "geosite-data"
 GEOIP_DATA = OUT / "geoip-data"
 GEOIP_CONFIG = OUT / "geoip-config.json"
+IMPORT_GEOSITE_DIR = OUT / "import/geosite-unpacked"
+IMPORT_GEOIP_DIR = OUT / "import/geoip-unpacked"
 REPO_URL = "https://github.com/R0iZ/ownrouterules"
 
-RULE_ORDER = {
+DOMAIN_RULE_ORDER = {
     "DOMAIN-SUFFIX": 0,
     "DOMAIN": 1,
     "DOMAIN-KEYWORD": 2,
-    "IP-CIDR": 3,
-    "IP-CIDR6": 4,
+    "DOMAIN-REGEX": 3,
+}
+
+IP_RULE_ORDER = {
+    "IP-CIDR": 0,
+    "IP-CIDR6": 1,
 }
 
 CLASSICAL_PREFIXES = (
     "DOMAIN-SUFFIX,",
     "DOMAIN-KEYWORD,",
     "DOMAIN,",
+    "DOMAIN-REGEX,",
     "IP-CIDR,",
     "IP-CIDR6,",
 )
@@ -72,6 +79,23 @@ def parse_ip(line: str) -> str | None:
     return line
 
 
+def parse_v2dat_geosite_line(line: str) -> tuple[str, str] | None:
+    line = line.strip()
+    if not line or line.startswith("#"):
+        return None
+    if line.startswith("keyword:"):
+        return "DOMAIN-KEYWORD", line[8:].strip()
+    if line.startswith("regexp:"):
+        return "DOMAIN-REGEX", line[7:].strip()
+    if line.startswith("full:"):
+        return "DOMAIN", line[5:].strip()
+    return "DOMAIN-SUFFIX", line
+
+
+def cidr_to_rule(cidr: str) -> tuple[str, str]:
+    return ("IP-CIDR6", cidr) if ":" in cidr else ("IP-CIDR", cidr)
+
+
 def geosite_domain(rule_type: str, value: str) -> str | None:
     if rule_type == "DOMAIN-SUFFIX":
         return value.lstrip(".")
@@ -80,7 +104,11 @@ def geosite_domain(rule_type: str, value: str) -> str | None:
     return None
 
 
-def build_yaml(name: str, rules: list[tuple[str, str]]) -> str:
+def sort_rules(rules: list[tuple[str, str]], order: dict[str, int]) -> list[tuple[str, str]]:
+    return sorted(dict.fromkeys(rules), key=lambda item: (order.get(item[0], 99), item[1]))
+
+
+def build_yaml(name: str, rules: list[tuple[str, str]], order: dict[str, int]) -> str:
     counts = Counter(rule_type for rule_type, _ in rules)
     display_name = name.replace("-", " ").replace("_", " ").title()
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
@@ -91,7 +119,7 @@ def build_yaml(name: str, rules: list[tuple[str, str]]) -> str:
         f"# REPO: {REPO_URL}",
         f"# UPDATED: {updated}",
     ]
-    for key in RULE_ORDER:
+    for key in order:
         if counts[key]:
             header.append(f"# {key}: {counts[key]}")
     header.append(f"# TOTAL: {len(rules)}")
@@ -99,6 +127,31 @@ def build_yaml(name: str, rules: list[tuple[str, str]]) -> str:
 
     body = [f"  - {rule_type},{value}" for rule_type, value in rules]
     return "\n".join(header + body) + "\n"
+
+
+def load_v2dat_geosite_rules(directory: Path) -> list[tuple[str, str]]:
+    if not directory.is_dir():
+        return []
+
+    rules: list[tuple[str, str]] = []
+    for path in directory.glob("*.txt"):
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            if rule := parse_v2dat_geosite_line(line):
+                rules.append(rule)
+    return rules
+
+
+def load_v2dat_geoip_rules(directory: Path) -> list[tuple[str, str]]:
+    if not directory.is_dir():
+        return []
+
+    rules: list[tuple[str, str]] = []
+    for path in directory.glob("*.txt"):
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            cidr = parse_ip(line)
+            if cidr:
+                rules.append(cidr_to_rule(cidr))
+    return rules
 
 
 def write_geoip_config() -> bool:
@@ -131,31 +184,33 @@ def write_geoip_config() -> bool:
     return True
 
 
+all_domain_rules: list[tuple[str, str]] = []
+all_ip_rules: list[tuple[str, str]] = []
+
 for src in SOURCE.glob("*.txt"):
     name = src.stem
     parsed = [rule for line in src.read_text(encoding="utf-8").splitlines() if (rule := parse_rule(line))]
-
-    rules = sorted(
-        dict.fromkeys(parsed),
-        key=lambda item: (RULE_ORDER.get(item[0], 99), item[1]),
-    )
+    rules = sort_rules(parsed, DOMAIN_RULE_ORDER)
 
     if not rules:
         print(f"skip {name}: no rules")
         continue
 
-    (YAML_OUT / f"{name}.yaml").write_text(build_yaml(name, rules), encoding="utf-8")
+    domain_rules = [rule for rule in rules if rule[0] in DOMAIN_RULE_ORDER]
+    all_domain_rules.extend(domain_rules)
+
+    (YAML_OUT / f"{name}.yaml").write_text(build_yaml(name, domain_rules, DOMAIN_RULE_ORDER), encoding="utf-8")
 
     geosite_domains = sorted(
         {
             domain
-            for rule_type, value in rules
+            for rule_type, value in domain_rules
             if (domain := geosite_domain(rule_type, value))
         }
     )
     (GEOSITE_DATA / name).write_text("\n".join(geosite_domains) + "\n", encoding="utf-8")
 
-    print(f"prepared {name} ({len(rules)} rules, {len(geosite_domains)} geosite domains)")
+    print(f"prepared {name} ({len(domain_rules)} domain rules, {len(geosite_domains)} geosite domains)")
 
 for src in SOURCE_IP.glob("*.txt"):
     name = src.stem
@@ -165,13 +220,43 @@ for src in SOURCE_IP.glob("*.txt"):
         print(f"skip ip/{name}: no cidrs")
         continue
 
+    ip_rules = [cidr_to_rule(cidr) for cidr in cidrs]
+    all_ip_rules.extend(ip_rules)
+
     ip_text = "\n".join(cidrs) + "\n"
     (IP_OUT / f"{name}.txt").write_text(ip_text, encoding="utf-8")
     (GEOIP_DATA / name).write_text(ip_text, encoding="utf-8")
 
     print(f"prepared ip/{name} ({len(cidrs)} cidrs)")
 
+imported_domain_rules = load_v2dat_geosite_rules(IMPORT_GEOSITE_DIR)
+imported_ip_rules = load_v2dat_geoip_rules(IMPORT_GEOIP_DIR)
+all_domain_rules.extend(imported_domain_rules)
+all_ip_rules.extend(imported_ip_rules)
+
+if imported_domain_rules:
+    print(f"imported {len(imported_domain_rules)} domain rules from runetfreedom geosite.dat")
+if imported_ip_rules:
+    print(f"imported {len(imported_ip_rules)} ip rules from runetfreedom geoip.dat")
+
+merged_domains = sort_rules(all_domain_rules, DOMAIN_RULE_ORDER)
+merged_ips = sort_rules(all_ip_rules, IP_RULE_ORDER)
+
+if merged_domains:
+    (YAML_OUT / "blocked-domains.yaml").write_text(
+        build_yaml("Blocked Domains", merged_domains, DOMAIN_RULE_ORDER),
+        encoding="utf-8",
+    )
+    print(f"wrote blocked-domains.yaml ({len(merged_domains)} rules)")
+
+if merged_ips:
+    (YAML_OUT / "blocked-ip.yaml").write_text(
+        build_yaml("Blocked IP", merged_ips, IP_RULE_ORDER),
+        encoding="utf-8",
+    )
+    print(f"wrote blocked-ip.yaml ({len(merged_ips)} rules)")
+
 if write_geoip_config():
     print(f"wrote {GEOIP_CONFIG}")
 else:
-    print("no IP lists, skip geoip.dat config")
+    print("no local IP lists, skip geoip.dat config")

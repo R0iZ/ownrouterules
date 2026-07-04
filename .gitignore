@@ -1,3 +1,4 @@
 output/geosite-data/
 output/geoip-data/
 output/geoip-config.json
+output/import/

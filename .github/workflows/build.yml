@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+env:
+  RUNETFREEDOM_GEOSITE_URL: https://raw.githubusercontent.com/runetfreedom/russia-blocked-geosite/release/geosite.dat
+  RUNETFREEDOM_GEOIP_URL: https://raw.githubusercontent.com/runetfreedom/russia-blocked-geoip/release/geoip-ru-only.dat
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,6 +29,22 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.24"
+
+      - name: Download external rule databases
+        run: |
+          mkdir -p output/import
+          curl -fsSL -o output/import/russia-geosite.dat "${RUNETFREEDOM_GEOSITE_URL}"
+          curl -fsSL -o output/import/russia-geoip.dat "${RUNETFREEDOM_GEOIP_URL}"
+
+      - name: Extract external databases
+        run: |
+          git clone --depth=1 https://github.com/urlesistiana/v2dat.git /tmp/v2dat
+          cd /tmp/v2dat
+          go build -o v2dat .
+          ./v2dat unpack geosite -d "${GITHUB_WORKSPACE}/output/import/geosite-unpacked" \
+            "${GITHUB_WORKSPACE}/output/import/russia-geosite.dat"
+          ./v2dat unpack geoip -d "${GITHUB_WORKSPACE}/output/import/geoip-unpacked" \
+            "${GITHUB_WORKSPACE}/output/import/russia-geoip.dat"
 
       - name: Generate sources
         run: python3 build.py
@@ -78,12 +98,9 @@ jobs:
 
       - name: Verify outputs
         run: |
-          ls -la output/yaml output/ip output/srs 2>/dev/null || true
-          ls -la output/geosite.dat output/geoip.dat 2>/dev/null || true
-          srs_count=$(find output/srs -maxdepth 1 -name '*.srs' 2>/dev/null | wc -l)
-          if [ -f output/geosite.dat ] || [ -f output/geoip.dat ]; then
-            test "$srs_count" -gt 0
-          fi
+          test -f output/yaml/blocked-domains.yaml
+          test -f output/yaml/blocked-ip.yaml
+          ls -la output/yaml/blocked-domains.yaml output/yaml/blocked-ip.yaml
 
       - name: Commit generated files
         uses: stefanzweifel/git-auto-commit-action@v7
