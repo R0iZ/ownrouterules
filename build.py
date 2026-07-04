@@ -7,6 +7,7 @@ SOURCE = Path("source")
 SOURCE_IP = SOURCE / "ip"
 OUT = Path("output")
 YAML_OUT = OUT / "yaml"
+DOMAINS_OUT = OUT / "domains"
 IP_OUT = OUT / "ip"
 GEOSITE_DATA = OUT / "geosite-data"
 GEOIP_DATA = OUT / "geoip-data"
@@ -41,7 +42,7 @@ IP_PREFIXES = (
     "IP-CIDR6,",
 )
 
-for p in [YAML_OUT, IP_OUT, GEOSITE_DATA, GEOIP_DATA]:
+for p in [YAML_OUT, DOMAINS_OUT, IP_OUT, GEOSITE_DATA, GEOIP_DATA]:
     p.mkdir(parents=True, exist_ok=True)
 
 
@@ -154,6 +155,16 @@ def load_v2dat_geoip_rules(directory: Path) -> list[tuple[str, str]]:
     return rules
 
 
+def rules_to_domain_suffixes(rules: list[tuple[str, str]]) -> list[str]:
+    suffixes: set[str] = set()
+    for rule_type, value in rules:
+        if rule_type == "DOMAIN-SUFFIX":
+            suffixes.add(value.lstrip("."))
+        elif rule_type == "DOMAIN":
+            suffixes.add(value)
+    return sorted(suffixes)
+
+
 def write_geoip_config() -> bool:
     if not any(GEOIP_DATA.iterdir()):
         return False
@@ -243,11 +254,18 @@ merged_domains = sort_rules(all_domain_rules, DOMAIN_RULE_ORDER)
 merged_ips = sort_rules(all_ip_rules, IP_RULE_ORDER)
 
 if merged_domains:
-    (YAML_OUT / "blocked-domains.yaml").write_text(
-        build_yaml("Blocked Domains", merged_domains, DOMAIN_RULE_ORDER),
-        encoding="utf-8",
-    )
-    print(f"wrote blocked-domains.yaml ({len(merged_domains)} rules)")
+    # Plain suffix list for Mihomo behavior: domain (much lighter than classical YAML).
+    suffixes = rules_to_domain_suffixes(merged_domains)
+    (DOMAINS_OUT / "blocked-domains.txt").write_text("\n".join(suffixes) + "\n", encoding="utf-8")
+    print(f"wrote domains/blocked-domains.txt ({len(suffixes)} suffixes)")
+
+    keyword_regex = [rule for rule in merged_domains if rule[0] in {"DOMAIN-KEYWORD", "DOMAIN-REGEX"}]
+    if keyword_regex:
+        (YAML_OUT / "blocked-domains-extra.yaml").write_text(
+            build_yaml("Blocked Domains Extra", keyword_regex, DOMAIN_RULE_ORDER),
+            encoding="utf-8",
+        )
+        print(f"wrote blocked-domains-extra.yaml ({len(keyword_regex)} keyword/regex rules)")
 
 if merged_ips:
     # Plain text for Mihomo behavior: ipcidr (classical YAML is too slow on routers).

@@ -102,16 +102,17 @@ jobs:
 
       - name: Verify outputs
         run: |
-          test -f output/yaml/blocked-domains.yaml
+          test -f output/yaml/domains.yaml
+          test -f output/domains/blocked-domains.txt
           test -f output/ip/blocked-ip.txt
-          domain_total=$(grep -E '^# TOTAL:' output/yaml/blocked-domains.yaml | awk '{print $3}')
+          domain_total=$(grep -cve '^\s*$' output/domains/blocked-domains.txt)
           ip_total=$(grep -cve '^\s*$' output/ip/blocked-ip.txt)
-          echo "blocked-domains total: ${domain_total}"
-          echo "blocked-ip total: ${ip_total}"
+          echo "blocked-domains suffixes: ${domain_total}"
+          echo "blocked-ip cidrs: ${ip_total}"
           test "${domain_total}" -gt 1000
           test "${ip_total}" -gt 0
-          # Remove legacy classical IP YAML if present (too heavy for routers).
-          rm -f output/yaml/blocked-ip.yaml
+          # Remove legacy heavy classical YAML outputs.
+          rm -f output/yaml/blocked-domains.yaml output/yaml/blocked-ip.yaml
 
       - name: Commit generated files
         uses: stefanzweifel/git-auto-commit-action@v7
