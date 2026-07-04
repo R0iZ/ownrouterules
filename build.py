@@ -250,11 +250,10 @@ if merged_domains:
     print(f"wrote blocked-domains.yaml ({len(merged_domains)} rules)")
 
 if merged_ips:
-    (YAML_OUT / "blocked-ip.yaml").write_text(
-        build_yaml("Blocked IP", merged_ips, IP_RULE_ORDER),
-        encoding="utf-8",
-    )
-    print(f"wrote blocked-ip.yaml ({len(merged_ips)} rules)")
+    # Plain text for Mihomo behavior: ipcidr (classical YAML is too slow on routers).
+    cidrs = [value for _, value in merged_ips]
+    (IP_OUT / "blocked-ip.txt").write_text("\n".join(cidrs) + "\n", encoding="utf-8")
+    print(f"wrote ip/blocked-ip.txt ({len(cidrs)} cidrs)")
 
 if write_geoip_config():
     print(f"wrote {GEOIP_CONFIG}")
