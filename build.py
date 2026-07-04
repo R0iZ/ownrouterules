@@ -97,11 +97,18 @@ def cidr_to_rule(cidr: str) -> tuple[str, str]:
     return ("IP-CIDR6", cidr) if ":" in cidr else ("IP-CIDR", cidr)
 
 
+def normalize_domain(domain: str) -> str | None:
+    domain = domain.strip().strip(".").strip()
+    if not domain:
+        return None
+    return domain
+
+
 def geosite_domain(rule_type: str, value: str) -> str | None:
     if rule_type == "DOMAIN-SUFFIX":
-        return value.lstrip(".")
+        return normalize_domain(value)
     if rule_type == "DOMAIN":
-        return value
+        return normalize_domain(value)
     return None
 
 
@@ -158,10 +165,9 @@ def load_v2dat_geoip_rules(directory: Path) -> list[tuple[str, str]]:
 def rules_to_domain_suffixes(rules: list[tuple[str, str]]) -> list[str]:
     suffixes: set[str] = set()
     for rule_type, value in rules:
-        if rule_type == "DOMAIN-SUFFIX":
-            suffixes.add(value.lstrip("."))
-        elif rule_type == "DOMAIN":
-            suffixes.add(value)
+        if rule_type in {"DOMAIN-SUFFIX", "DOMAIN"}:
+            if domain := normalize_domain(value):
+                suffixes.add(domain)
     return sorted(suffixes)
 
 
