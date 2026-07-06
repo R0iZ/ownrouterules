@@ -1,9 +1,9 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-07-06 02:04:01
-# DOMAIN-SUFFIX: 90
-# TOTAL: 90
+# UPDATED: 2026-07-06 07:07:13
+# DOMAIN-SUFFIX: 91
+# TOTAL: 91
 payload:
   - DOMAIN-SUFFIX,4pda.to
   - DOMAIN-SUFFIX,4pda.ws
@@ -30,6 +30,7 @@ payload:
   - DOMAIN-SUFFIX,domashka.club
   - DOMAIN-SUFFIX,epicgames.com
   - DOMAIN-SUFFIX,fastly.net
+  - DOMAIN-SUFFIX,fornex.com
   - DOMAIN-SUFFIX,grafana.com
   - DOMAIN-SUFFIX,groklearning.com
   - DOMAIN-SUFFIX,habr.com
