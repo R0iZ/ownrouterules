@@ -92,3 +92,4 @@
 +.amnezia.org
 +.supercell.com
 +.securitylab.ru
++.fornex.com
