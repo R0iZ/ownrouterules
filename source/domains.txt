@@ -93,3 +93,4 @@
 +.supercell.com
 +.securitylab.ru
 +.fornex.com
++.coloros.com
