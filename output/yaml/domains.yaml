@@ -1,12 +1,10 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-08-13 01:00:28
-# DOMAIN-SUFFIX: 93
-# TOTAL: 93
+# UPDATED: 2026-08-13 15:59:41
+# DOMAIN-SUFFIX: 91
+# TOTAL: 91
 payload:
-  - DOMAIN-SUFFIX,4pda.to
-  - DOMAIN-SUFFIX,4pda.ws
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
   - DOMAIN-SUFFIX,akamaitechnologies.com
