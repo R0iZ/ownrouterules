@@ -1,3 +1,4 @@
+DOMAIN-KEYWORD,synology
 +.adbappcontrol.com
 +.adobe.com
 +.akamaitechnologies.com
