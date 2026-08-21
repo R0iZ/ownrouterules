@@ -92,3 +92,5 @@
 +.fornex.com
 +.coloros.com
 +.easytunel.space
++.mycdn.me
++.okcdn.ru
