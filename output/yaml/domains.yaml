@@ -1,9 +1,9 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-08-21 08:26:20
-# DOMAIN-SUFFIX: 93
-# TOTAL: 93
+# UPDATED: 2026-08-21 10:07:58
+# DOMAIN-SUFFIX: 91
+# TOTAL: 91
 payload:
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
@@ -52,11 +52,9 @@ payload:
   - DOMAIN-SUFFIX,mobiwork.org
   - DOMAIN-SUFFIX,mobtop.com
   - DOMAIN-SUFFIX,mozilla.org
-  - DOMAIN-SUFFIX,mycdn.me
   - DOMAIN-SUFFIX,myfilmex.org
   - DOMAIN-SUFFIX,notion.site
   - DOMAIN-SUFFIX,ntc.party
-  - DOMAIN-SUFFIX,okcdn.ru
   - DOMAIN-SUFFIX,openwrt.org
   - DOMAIN-SUFFIX,ospserver.net
   - DOMAIN-SUFFIX,phpmyadmin.net
