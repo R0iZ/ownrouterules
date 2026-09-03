@@ -1,10 +1,10 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-09-03 01:55:38
-# DOMAIN-SUFFIX: 91
-# DOMAIN-KEYWORD: 1
-# TOTAL: 92
+# UPDATED: 2026-09-03 17:18:41
+# DOMAIN-SUFFIX: 95
+# DOMAIN-KEYWORD: 2
+# TOTAL: 97
 payload:
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
@@ -33,6 +33,9 @@ payload:
   - DOMAIN-SUFFIX,fastly.net
   - DOMAIN-SUFFIX,fornex.com
   - DOMAIN-SUFFIX,grafana.com
+  - DOMAIN-SUFFIX,grok.com
+  - DOMAIN-SUFFIX,grok.x.com
+  - DOMAIN-SUFFIX,grokipedia.com
   - DOMAIN-SUFFIX,groklearning.com
   - DOMAIN-SUFFIX,habr.com
   - DOMAIN-SUFFIX,habrastorage.org
@@ -91,10 +94,12 @@ payload:
   - DOMAIN-SUFFIX,whatismyipaddress.com
   - DOMAIN-SUFFIX,whoer.net
   - DOMAIN-SUFFIX,winudf.com
+  - DOMAIN-SUFFIX,x.ai
   - DOMAIN-SUFFIX,xhamster.com
   - DOMAIN-SUFFIX,xhcdn.com
   - DOMAIN-SUFFIX,xv-ru.com
   - DOMAIN-SUFFIX,xvideos-cdn.com
   - DOMAIN-SUFFIX,zepp.com
   - DOMAIN-SUFFIX,zomro.com
+  - DOMAIN-KEYWORD,grok
   - DOMAIN-KEYWORD,synology

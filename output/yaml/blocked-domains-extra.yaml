@@ -1,11 +1,12 @@
 # NAME: Blocked Domains Extra
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-09-03 01:55:43
-# DOMAIN-KEYWORD: 1
+# UPDATED: 2026-09-03 17:18:46
+# DOMAIN-KEYWORD: 2
 # DOMAIN-REGEX: 163
-# TOTAL: 164
+# TOTAL: 165
 payload:
+  - DOMAIN-KEYWORD,grok
   - DOMAIN-KEYWORD,synology
   - DOMAIN-REGEX,(\w+)-static-[0-9]+\.cdntogo\.net$
   - DOMAIN-REGEX,(^|\.)13mei[5-7]\.buzz$
