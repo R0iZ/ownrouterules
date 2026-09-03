@@ -1,4 +1,5 @@
 DOMAIN-KEYWORD,synology
+DOMAIN-KEYWORD,grok
 +.adbappcontrol.com
 +.adobe.com
 +.akamaitechnologies.com
@@ -89,6 +90,10 @@ DOMAIN-KEYWORD,synology
 +.domashka.club
 +.amnezia.org
 +.supercell.com
++.grok.com
++.grokipedia.com
++.x.ai
++.grok.x.com
 +.securitylab.ru
 +.fornex.com
 +.coloros.com
