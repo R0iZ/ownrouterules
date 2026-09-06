@@ -1,5 +1,6 @@
 DOMAIN-KEYWORD,synology
 DOMAIN-KEYWORD,grok
+DOMAIN-KEYWORD,cursor
 +.adbappcontrol.com
 +.adobe.com
 +.akamaitechnologies.com
