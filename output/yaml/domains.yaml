@@ -1,10 +1,10 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-09-06 01:45:34
+# UPDATED: 2026-09-06 04:41:43
 # DOMAIN-SUFFIX: 95
-# DOMAIN-KEYWORD: 2
-# TOTAL: 97
+# DOMAIN-KEYWORD: 3
+# TOTAL: 98
 payload:
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
@@ -101,5 +101,6 @@ payload:
   - DOMAIN-SUFFIX,xvideos-cdn.com
   - DOMAIN-SUFFIX,zepp.com
   - DOMAIN-SUFFIX,zomro.com
+  - DOMAIN-KEYWORD,cursor
   - DOMAIN-KEYWORD,grok
   - DOMAIN-KEYWORD,synology
