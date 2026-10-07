@@ -99,3 +99,4 @@ DOMAIN-KEYWORD,cursor
 +.fornex.com
 +.coloros.com
 +.easytunel.space
++.bigboss.love
