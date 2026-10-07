@@ -1,10 +1,10 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-10-07 03:09:31
-# DOMAIN-SUFFIX: 95
+# UPDATED: 2026-10-07 04:37:59
+# DOMAIN-SUFFIX: 96
 # DOMAIN-KEYWORD: 3
-# TOTAL: 98
+# TOTAL: 99
 payload:
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
@@ -17,6 +17,7 @@ payload:
   - DOMAIN-SUFFIX,arkoselabs.co
   - DOMAIN-SUFFIX,arkoselabs.com
   - DOMAIN-SUFFIX,b-cdn.net
+  - DOMAIN-SUFFIX,bigboss.love
   - DOMAIN-SUFFIX,browserleaks.com
   - DOMAIN-SUFFIX,browserleaks.net
   - DOMAIN-SUFFIX,caddy.community
