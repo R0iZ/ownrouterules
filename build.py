@@ -203,6 +203,7 @@ def write_geoip_config() -> bool:
 
 all_domain_rules: list[tuple[str, str]] = []
 all_ip_rules: list[tuple[str, str]] = []
+active_yaml_names: set[str] = set()
 
 for src in SOURCE.glob("*.txt"):
     name = src.stem
@@ -214,9 +215,18 @@ for src in SOURCE.glob("*.txt"):
         continue
 
     domain_rules = [rule for rule in rules if rule[0] in DOMAIN_RULE_ORDER]
+    dropped_ip = [rule for rule in rules if rule[0] in IP_RULE_ORDER]
+    if dropped_ip:
+        print(
+            f"warning: {name}.txt has {len(dropped_ip)} IP rules; "
+            "move them to source/ip/*.txt (ignored in domains.yaml)"
+        )
+
     all_domain_rules.extend(domain_rules)
 
-    (YAML_OUT / f"{name}.yaml").write_text(build_yaml(name, domain_rules, DOMAIN_RULE_ORDER), encoding="utf-8")
+    yaml_name = f"{name}.yaml"
+    active_yaml_names.add(yaml_name)
+    (YAML_OUT / yaml_name).write_text(build_yaml(name, domain_rules, DOMAIN_RULE_ORDER), encoding="utf-8")
 
     geosite_domains = sorted(
         {
@@ -266,18 +276,28 @@ if merged_domains:
     print(f"wrote domains/blocked-domains.txt ({len(suffixes)} suffixes)")
 
     keyword_regex = [rule for rule in merged_domains if rule[0] in {"DOMAIN-KEYWORD", "DOMAIN-REGEX"}]
+    extra_yaml = YAML_OUT / "blocked-domains-extra.yaml"
     if keyword_regex:
-        (YAML_OUT / "blocked-domains-extra.yaml").write_text(
+        active_yaml_names.add(extra_yaml.name)
+        extra_yaml.write_text(
             build_yaml("Blocked Domains Extra", keyword_regex, DOMAIN_RULE_ORDER),
             encoding="utf-8",
         )
         print(f"wrote blocked-domains-extra.yaml ({len(keyword_regex)} keyword/regex rules)")
+    elif extra_yaml.exists():
+        extra_yaml.unlink()
+        print("removed stale blocked-domains-extra.yaml")
 
 if merged_ips:
     # Plain text for Mihomo behavior: ipcidr (classical YAML is too slow on routers).
     cidrs = [value for _, value in merged_ips]
     (IP_OUT / "blocked-ip.txt").write_text("\n".join(cidrs) + "\n", encoding="utf-8")
     print(f"wrote ip/blocked-ip.txt ({len(cidrs)} cidrs)")
+
+for yaml_file in YAML_OUT.glob("*.yaml"):
+    if yaml_file.name not in active_yaml_names:
+        yaml_file.unlink()
+        print(f"removed stale {yaml_file.as_posix()}")
 
 if write_geoip_config():
     print(f"wrote {GEOIP_CONFIG}")

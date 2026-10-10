@@ -83,9 +83,6 @@ DOMAIN-KEYWORD,cursor
 +.zepp.com
 +.zomro.com
 +.ip.wtf
-+.ipify.org
-+.ifconfig.me
-+.whatismyipaddress.com
 +.community-scripts.org
 +.openwrt.org
 +.domashka.club
