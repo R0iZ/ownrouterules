@@ -1,12 +1,8 @@
 DOMAIN-KEYWORD,synology
-DOMAIN-KEYWORD,grok
-DOMAIN-KEYWORD,cursor
 +.adbappcontrol.com
 +.adobe.com
 +.akamaitechnologies.com
 +.alicdn.com
-+.allawnos.com
-+.allawnofs.com
 +.amazonaws.com
 +.arkoselabs.co
 +.arkoselabs.com
@@ -26,9 +22,6 @@ DOMAIN-KEYWORD,cursor
 +.habr.com
 +.habrastorage.org
 +.hcaptcha.com
-+.heytapdl.com
-+.heytapmobi.com
-+.heytapmobile.com
 +.huan.tv
 +.ifconfig.me
 +.iffalcon.com
@@ -47,7 +40,6 @@ DOMAIN-KEYWORD,cursor
 +.ospserver.net
 +.phpmyadmin.net
 +.podkop.net
-+.qwen.ai
 +.razer.com
 +.razersynapse.com
 +.ru.actor
@@ -59,8 +51,6 @@ DOMAIN-KEYWORD,cursor
 +.sony.ru
 +.spac.me
 +.stereo.ru
-+.stripe.com
-+.stripecdn.com
 +.surbl.org
 +.synocommunity.com
 +.synology.com
@@ -90,11 +80,6 @@ DOMAIN-KEYWORD,cursor
 +.openwrt.org
 +.domashka.club
 +.amnezia.org
-+.supercell.com
-+.grok.com
-+.grokipedia.com
-+.x.ai
-+.grok.x.com
 +.securitylab.ru
 +.fornex.com
 +.coloros.com
