@@ -1,17 +1,15 @@
 # NAME: Domains
 # AUTHOR: R0iZ
 # REPO: https://github.com/R0iZ/ownrouterules
-# UPDATED: 2026-10-25 02:09:48
-# DOMAIN-SUFFIX: 96
-# DOMAIN-KEYWORD: 3
-# TOTAL: 99
+# UPDATED: 2026-10-25 08:30:28
+# DOMAIN-SUFFIX: 83
+# DOMAIN-KEYWORD: 1
+# TOTAL: 84
 payload:
   - DOMAIN-SUFFIX,adbappcontrol.com
   - DOMAIN-SUFFIX,adobe.com
   - DOMAIN-SUFFIX,akamaitechnologies.com
   - DOMAIN-SUFFIX,alicdn.com
-  - DOMAIN-SUFFIX,allawnofs.com
-  - DOMAIN-SUFFIX,allawnos.com
   - DOMAIN-SUFFIX,amazonaws.com
   - DOMAIN-SUFFIX,amnezia.org
   - DOMAIN-SUFFIX,arkoselabs.co
@@ -34,16 +32,10 @@ payload:
   - DOMAIN-SUFFIX,fastly.net
   - DOMAIN-SUFFIX,fornex.com
   - DOMAIN-SUFFIX,grafana.com
-  - DOMAIN-SUFFIX,grok.com
-  - DOMAIN-SUFFIX,grok.x.com
-  - DOMAIN-SUFFIX,grokipedia.com
   - DOMAIN-SUFFIX,groklearning.com
   - DOMAIN-SUFFIX,habr.com
   - DOMAIN-SUFFIX,habrastorage.org
   - DOMAIN-SUFFIX,hcaptcha.com
-  - DOMAIN-SUFFIX,heytapdl.com
-  - DOMAIN-SUFFIX,heytapmobi.com
-  - DOMAIN-SUFFIX,heytapmobile.com
   - DOMAIN-SUFFIX,huan.tv
   - DOMAIN-SUFFIX,ifconfig.me
   - DOMAIN-SUFFIX,iffalcon.com
@@ -64,7 +56,6 @@ payload:
   - DOMAIN-SUFFIX,ospserver.net
   - DOMAIN-SUFFIX,phpmyadmin.net
   - DOMAIN-SUFFIX,podkop.net
-  - DOMAIN-SUFFIX,qwen.ai
   - DOMAIN-SUFFIX,razer.com
   - DOMAIN-SUFFIX,razersynapse.com
   - DOMAIN-SUFFIX,ru.actor
@@ -77,9 +68,6 @@ payload:
   - DOMAIN-SUFFIX,sony.ru
   - DOMAIN-SUFFIX,spac.me
   - DOMAIN-SUFFIX,stereo.ru
-  - DOMAIN-SUFFIX,stripe.com
-  - DOMAIN-SUFFIX,stripecdn.com
-  - DOMAIN-SUFFIX,supercell.com
   - DOMAIN-SUFFIX,surbl.org
   - DOMAIN-SUFFIX,synocommunity.com
   - DOMAIN-SUFFIX,synology.com
@@ -95,13 +83,10 @@ payload:
   - DOMAIN-SUFFIX,whatismyipaddress.com
   - DOMAIN-SUFFIX,whoer.net
   - DOMAIN-SUFFIX,winudf.com
-  - DOMAIN-SUFFIX,x.ai
   - DOMAIN-SUFFIX,xhamster.com
   - DOMAIN-SUFFIX,xhcdn.com
   - DOMAIN-SUFFIX,xv-ru.com
   - DOMAIN-SUFFIX,xvideos-cdn.com
   - DOMAIN-SUFFIX,zepp.com
   - DOMAIN-SUFFIX,zomro.com
-  - DOMAIN-KEYWORD,cursor
-  - DOMAIN-KEYWORD,grok
   - DOMAIN-KEYWORD,synology
